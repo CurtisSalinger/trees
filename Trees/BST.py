@@ -50,11 +50,7 @@ class BST(BinaryTree):
 		are actually working.
 		'''
 		if self.root:
-			is_satisfied = self._is_bst_satisfied(self.root)
-
-			if is_satisfied == True:
-				return True
-			return False
+			return BST._is_bst_satisfied(self.root)
 		return True
 
 	@staticmethod
@@ -73,12 +69,12 @@ class BST(BinaryTree):
 			if node.value > node.left.value:
 				is_left =  BST._is_bst_satisfied(node.left)
 			else:
-				is_left =  False
+				return False
 		if node.right:
 			if node.value < node.right.value:
 				is_right =  BST._is_bst_satisfied(node.right)
 			else:
-				is_right = False
+				return False
 
 		return is_right and is_right
 
@@ -156,6 +152,8 @@ class BST(BinaryTree):
 			return BST._find(node.left, value)
 		if value == node.value:
 			return True
+		else:
+			return False
 
 	def find_smallest(self):
 		'''
@@ -179,6 +177,7 @@ class BST(BinaryTree):
 	@staticmethod
 	def _find_smallest(node):
 		
+		assert node is not None
 		if node.left is None:
 			return node.value
 		else:
@@ -226,45 +225,98 @@ class BST(BinaryTree):
 		HINT:
 		Use a recursive helper function.
 		'''
-		#self.root = BST._remove(self.root,value)
-				
-		if self.root is None:
-			return None
-		if self.find(value):
-			return BST._remove(self.root, value)
-		else:
-			return self
-	
+
+		self.root = BST._remove(self.root,value)
+		'''		
+		if self.root:
+			if self.root.value == value:
+				#Case #3 where there are two branches
+				if self.root.left and self.root.right:
+					store_rootval = BST._find_smallest(self.root)
+					BST._remove(self.root, store_rootval)
+					self.root.value = store_rootval
+				#Case #2 where only one branch
+				elif self.root.left or self.root.right:
+					if self.root.left:
+						self.root.value = self.root.left.value
+						self.root.left = None
+					if self.root.right:
+						self.root.value = self.root.right.value
+						self.root.right = None
+					#Case #1 where it is a leaf
+				else:
+					self.root = None
+			else:
+				BST._remove(self.root,value)
+		'''
 
 	@staticmethod
 	def _remove(node, value):
-		if node.right.value == value or node.left.value == value:		
-				#Case 3 where there are two branches off value
-				if node.right and node.right.value == value and node.right.left and node.right.right:
-					store = _find_smallest(node.right.right).value
-					_remove(node.right,store)
-					node.right.value = store
-				if node.left and node.left.value == value and node.left.left and node.left.right:
-					store = _find_largest(node.left.left).value
-					_remove(node.left,store)
-					node.left.value = store
-				#Case 2 where there is only one branch off value
-				if node.right and node.right.value == value and (node.right.left or node.right.right):
+		if node == None:
+			return None
+		if value < node.value:
+			node.left = BST._remove(node.left, value)
+		elif value > node.value:
+			node.right = BST._remove(node.right, value)
+		else:
+			if node.left is None and node.right is None:
+				return None
+			if node.right and node.left is None:
+				store = node.right
+				return store
+			if node.left and node.right is None:
+				store = node.left
+				return store
+
+			most_left = BST._find_smallest(node.right)
+
+			node.value = most_left
+
+			node.right = BST._remove(node.right, node.value)
+
+		return node
+		
+
+		'''
+		if node.left:
+			if node.left.value == value:
+				#Case 3: The node with value has a left and right branch
+				if node.left.left and node.left.right:
+					node.left.value = BST._find_largest(node.left.left)
+					BST._remove(node.left,node.left.value)
+				#Case 2: The node with value has either a left or right branch, don't need the nested if but for organization sake
+				if node.left.left or node.left.right:
+					if node.left.left:
+						node.left = node.left.left
+					else:
+						node.left = node.left.right
+				#Case 1: The node with value is a leaf
+					node.left = None
+		
+		if node.right:
+			if node.right.value == value:
+				#Case 3: The node with value has a left and right branch
+				if node.right.left and node.right.right:
+					node.right.value = BST._find_smallest(node.right.right)
+					BST._remove(node.right, node.right.value)
+				#Case 2: The node with value has either a left or right branch, don't need the nested if but for organization sake
+				if node.right.left or node.right.right:
 					if node.right.left:
 						node.right = node.right.left
 					if node.right.right:
 						node.right = node.right.right
-				if node.left and node.left.value == value and (node.left.left or node.left.right):
-					if node.left.left:
-						node.left = node.left.left
-					if node.right:
-						node.left.right
-				#Case 1 where it value is a leaf
-				if node.left and node.left.value == value:
-					node.left = None
-				if node.right and node.right.value == value:
-					node.right = None
-			
+				#Case 1: The node with value is a leaf
+				node.right = None
+		
+		if node.right:
+			if node.right.value > value:
+				BST._remove(node.left, value)
+		if node.left:
+			BST._remove(node.right, value)
+		
+		return ('Whoops infitie')
+
+		'''
 
 	def remove_list(self, xs):
 		'''
@@ -275,6 +327,6 @@ class BST(BinaryTree):
 		'''
 		if xs:
 			for x in xs:
-				remove(x)
+				self.remove(x)
 
 
