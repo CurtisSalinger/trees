@@ -112,7 +112,6 @@ def test__BinaryTree_postorder2():
 def test__BinaryTree_postorder3():
     assert _example3.to_list('postorder') == [6, 7, 5, 4, 3, 9, 10, 8, 2, 11, 1, 14, 13, 12, 0, 1, 6, 7, 5, 4, 3, 9, 10, 8, 2, 11, 1, 14, 13, 12, 0, 0]
 
-
 def test__BinaryTree_height0():
     assert _example0.height() == -1
 

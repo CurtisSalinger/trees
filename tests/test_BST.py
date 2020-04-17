@@ -1,7 +1,6 @@
 from Trees.BinaryTree import BinaryTree, Node
 from Trees.BST import BST
 
-
 def test__BST_super():
     x = BST()
     assert isinstance(x,BinaryTree)
@@ -136,7 +135,6 @@ def test__BST_find_largest(xs):
         x = max(xs)
         bst = BST(xs)
         assert x == bst.find_largest()
-
 
 @given(xs=ints)
 def test__BST_remove1(xs):
